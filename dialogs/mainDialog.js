@@ -25,41 +25,48 @@ class MainDialog extends ComponentDialog {
         
         const dialogContext = await dialogSet.createContext(turnContext);
         
-        if (turnContext.activity.type != 'message'  || turnContext.activity.text == "Reset") { 
+        if (turnContext.activity.type != 'message') { 
             await dialogContext.beginDialog(this.id);
-            await this.showRandomPhotosStep(dialogContext);
+            return await this.showRandomPhotosStep(dialogContext);
         }
-        else{                     
-            if(turnContext.activity.text == "Show More")
-                turnContext.activity.value = {action:'showAuthorPhotos', auth:this.selectedAuthor};
+        else{  
+            switch(turnContext.activity.text){
+                case "Show More":
+                    return await this.showAuthorPhotosStep(dialogContext, this.selectedAuthor);
+                case "Reset":
+                    return await this.showRandomPhotosStep(dialogContext);
+            }
+            
             if(turnContext.activity.value){
                 switch(turnContext.activity.value.action){
                     case "showDescription":
-                        await this.showPhotoDescriptionStep(dialogContext, turnContext.activity.value.desc);                        
-                        break;
+                        await this.showPhotoDescriptionStep(dialogContext, turnContext.activity.value.desc);   
+                        return await this.choiceWhatsNextStep(dialogContext, turnContext.activity.value.auth);
+
                     case "showAuthorPhotos":
-                        await this.showAuthorPhotosStep(dialogContext, turnContext.activity.value.auth);
-                        break;
+                        return await this.showAuthorPhotosStep(dialogContext, turnContext.activity.value.auth);
+                        
                     default: console.log(turnContext.activity.value.action);              
                 }                
-                await this.choiceWhatsNextStep(dialogContext, turnContext.activity.value.auth);
+                //return await this.choiceWhatsNextStep(dialogContext, turnContext.activity.value.auth);
             }            
         }
     }
 
     async showRandomPhotosStep (stepContext){
-
-        var cardsData = await PhotoCardsDataProvider.getPhotoCardsData(CARDS_NUM);
-        var cardsCollection = this.createCardsCollection(cardsData, AttachmentLayoutTypes.List);
-        return await stepContext.context.sendActivity(cardsCollection);
+        return await this.showPhotoCardsCollectionStep(stepContext);
     }
 
-   async showAuthorPhotosStep (stepContext, author){
+    async showAuthorPhotosStep (stepContext, author){
+        return await this.showPhotoCardsCollectionStep(stepContext, author);
+    }
 
+    async showPhotoCardsCollectionStep (stepContext, author){
+        this.selectedAuthor = author;
         var cardsData = await PhotoCardsDataProvider.getPhotoCardsData(CARDS_NUM, author);
         var cardsCollection = this.createCardsCollection(cardsData, AttachmentLayoutTypes.List);
         return await stepContext.context.sendActivity(cardsCollection);
-   }
+    }
 
     async showPhotoDescriptionStep (stepContext, desc, auth){
         return await stepContext.context.sendActivity({text:desc});
@@ -72,23 +79,25 @@ class MainDialog extends ComponentDialog {
         const options = {
             prompt: "What's next?",
             retryPrompt: 'That was not a valid choice, please select a card or number from 1 to 2.',
-            choices:  [ { value: 'Show more photos for this author', synonyms: ['more photos']},
+            choices:  [ { value: 'Show More', synonyms: ['more photos']},
                         { value: 'Reset',     synonyms: ['reset'] } ]
         };
        return await stepContext.prompt('whatsNextPrompt', options);
     }
   
    
-    // ======================================
-    // Helper functions used to create cards.
-    // ======================================
+    // ================================================
+    // Helper functions used to create card collections.
+    // ================================================
     
     createPhotoCard(cardData) {
 
         const photoCard = CardFactory.heroCard(
             cardData.title,
             CardFactory.images([cardData.imageUrl]),
-            CardFactory.actions(!cardData.description ?[]: [
+            CardFactory.actions(
+//                !cardData.description ?[]:        //   uncomment to remove button if no description available
+                [
                 {
                     type: 'postBack',
                     title: 'Description',
