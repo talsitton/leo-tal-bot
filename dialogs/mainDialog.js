@@ -8,7 +8,7 @@ const CARDS_NUM = 5;
 
 class MainDialog extends ComponentDialog {
 
-    constructor(cardsData) {
+    constructor() {
 
         super('MainDialog');
         this.whatsNextPrompt = new ChoicePrompt('whatsNextPrompt');
@@ -17,6 +17,7 @@ class MainDialog extends ComponentDialog {
         this.selectedAuthor = null;
     }
 
+    // perform the flow logic on each of the bot's activity
     async run(turnContext, accessor) {
 
         const dialogSet = new DialogSet(accessor);
@@ -63,7 +64,7 @@ class MainDialog extends ComponentDialog {
 
     async showPhotoCardsCollectionStep (stepContext, author){
         this.selectedAuthor = author;
-        var cardsData = await PhotoCardsDataProvider.getPhotoCardsData(CARDS_NUM, author);
+        var cardsData = await PhotoCardsDataProvider.getFlickerCardsData(CARDS_NUM, author);
         var cardsCollection = this.createCardsCollection(cardsData, AttachmentLayoutTypes.List);
         return await stepContext.context.sendActivity(cardsCollection);
     }

@@ -1,24 +1,22 @@
 /** 
  * PhotoCardsDataProvider is a utility class for fetching relevant photo's data
- * from 3rd party photo APIs providers such as Flicker and normalize it for display in the Bot's dialogs
+ * from 3rd party photo APIs providers such as Flicker then normalize it for display in the Bot's dialogs
  */
 
 const FlickerApiBaseUrl = 'https://api.flickr.com/services/rest?extras=description%2Cdate_taken%2Cowner_name%2Crealname%2Curl_s&viewerNSID=&csrf=&api_key=a85c4df7177d836e50ed46b111bc72c2&format=json&hermes=1&hermesClient=1&reqId=c798cd67&nojsoncallback=1';
-
-const pTypes = {FLICKER:'flicker'};
 
 let nextAuthorPage = 0;
 
 class PhotoCardsDataProvider {
 
-    static async getPhotoCardsData(num = 5, author = null, random = true, providerType = pTypes.FLICKER){
-      
-        switch(providerType){
-            case pTypes.FLICKER:
-            default:  return await this.getFlickerCardsData(num, author);
-        }
-     }
+    // static async getPhotoCardsData(num = 5, author = null, random = true){      
+    //      return await this.getFlickerCardsData(num, author);
+    // }
 
+    /* @param  {int} num - the number of cards data to fetch
+    *  @param  {string} author - if not null fetch by author
+    *  @return {<PhotoCardData>} dialog
+    */
     static async getFlickerCardsData(num = 5, author = null){  
 
         var url = FlickerApiBaseUrl;
@@ -41,6 +39,12 @@ class PhotoCardsDataProvider {
     }
    
 }
+
+/** 
+ * PhotoCardData is the normalize data structure for the Bot's use in the photo card dialog's display.
+ * all providers should reduce fetched data to match this structure.
+ */
+
 class PhotoCardData{
 
     constructor(title="", imageUrl="", description="", author="",  dateTaken="", authorId="", id=""){
