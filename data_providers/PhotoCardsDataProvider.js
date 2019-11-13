@@ -47,11 +47,11 @@ class PhotoCardsDataProvider {
 
 class PhotoCardData{
 
-    constructor(title="", imageUrl="", description="", author="",  dateTaken="", authorId="", id=""){
+    constructor(title=" ", imageUrl=" ", description=" ", author=" ",  dateTaken=" ", authorId=" ", id=" "){
 
         this.title = title;
         this.imageUrl = imageUrl;
-        this.description = description
+        this.description = description;
         this.author = author;
         this.dateTaken = dateTaken;
         this.id = id;

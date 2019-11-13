@@ -1,0 +1,112 @@
+{
+    "type": "AdaptiveCard",
+    "body": [
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Random Photos",
+                    "size": "Medium",
+                    "wrap": true,
+                    "isVisible": false
+                },
+                {
+                    "type": "Image",
+                    "url": "{imageUrl}",
+                    "horizontalAlignment": "Center",
+                    "size": "Stretch"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "{title}",
+                    "wrap": true,
+                    "horizontalAlignment": "Center",
+                    "size": "Medium"
+                },
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Author:",
+                                    "wrap": true,
+                                    "color": "Good"
+                                }
+                            ],
+                            "width": "auto"
+                        },
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "weight": "Bolder",
+                                    "text": "{author}",
+                                    "wrap": true
+                                }
+                            ],
+                            "width": "auto"
+                        }
+                    ]
+                },
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Date Taken:",
+                                    "wrap": true,
+                                    "color": "Good"
+                                }
+                            ],
+                            "width": "auto"
+                        },
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "weight": "Bolder",
+                                    "text": "{dateTaken}",
+                                    "wrap": true
+                                }
+                            ],
+                            "width": "auto"
+                        }
+                    ]
+                }
+            ],
+            "style": "default",
+            "bleed": true
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.Submit",
+            "title": "Description",
+            "data": {
+                "action": "showDescription",
+                "desc": "{description}",
+                "auth": "{authorId}"
+            }
+        }
+    ],
+    "selectAction": {
+        "type": "Action.Submit",
+        "id": "tap",
+        "title": "tap",
+        "data": {
+            "action": "showAuthorPhotos",
+            "auth": "{authorId}"
+        }
+    },
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.0"
+}
